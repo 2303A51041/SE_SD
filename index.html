@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    main {
+      display: flex;
+      justify-content: space-around;
+      padding: 2rem;
+      flex-wrap: wrap;
+    }
+
+    h2 {
+      color: #4CAF50;
+    }
+
+    .form-section, .list-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin: 1rem;
+      width: 45%;
+      min-width: 300px;
+    }
+
+    form input, form button {
+      padding: 0.6rem;
+      margin: 0.4rem 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    form button {
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    form button:hover {
+      background: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    table th {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+      background: #333;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 Library Management System</h1>
+  </header>
+
+  <main>
+    <!-- Book Form -->
+    <section class="form-section">
+      <h2>Add a Book</h2>
+      <form id="bookForm">
+        <input type="text" id="title" placeholder="Book Title" required>
+        <input type="text" id="author" placeholder="Author" required>
+        <input type="number" id="year" placeholder="Year" required>
+        <button type="submit">Add Book</button>
+      </form>
+    </section>
+
+    <!-- Book List -->
+    <section class="list-section">
+      <h2>Book List</h2>
+      <table id="bookTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Year</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Books will appear here -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>Made with ❤️ using HTML, CSS, and JS</p>
+  </footer>
+
+  <script>
+    // Select elements
+    const bookForm = document.getElementById("bookForm");
+    const bookTable = document.getElementById("bookTable").getElementsByTagName("tbody")[0];
+
+    // Load books from localStorage
+    document.addEventListener("DOMContentLoaded", loadBooks);
+
+    bookForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Get input values
+      const title = document.getElementById("title").value;
+      const author = document.getElementById("author").value;
+      const year = document.getElementById("year").value;
+
+      // Create book object
+      const book = { title, author, year };
+
+      // Save book in localStorage
+      saveBook(book);
+
+      // Add book to table
+      addBookToTable(book);
+
+      // Reset form
+      bookForm.reset();
+    });
+
+    // Save to localStorage
+    function saveBook(book) {
+      let books = JSON.parse(localStorage.getItem("books")) || [];
+      books.push(book);
+      localStorage.setItem("books", JSON.stringify(books));
+    }
+
+    // Load books from localStorage
+    function loadBooks() {
+      let books = JSON.parse(localStorage.getItem("books")) || [];
+      books.forEach(book => addBookToTable(book));
+    }
+
+    // Add a book row to the table
+    function addBookToTable(book) {
+      const row = bookTable.insertRow();
+
+      row.innerHTML = `
+        <td>${book.title}</td>
+        <td>${book.author}</td>
+        <td>${book.year}</td>
+        <td><button class="delete-btn">Delete</button></td>
+      `;
+
+      // Delete button logic
+      row.querySelector(".delete-btn").addEventListener("click", function () {
+        row.remove();
+        removeBook(book);
+      });
+    }
+
+    // Remove from localStorage
+    function removeBook(bookToRemove) {
+      let books = JSON.parse(localStorage.getItem("books")) || [];
+      books = books.filter(
+        b => !(b.title === bookToRemove.title && b.author === bookToRemove.author && b.year === bookToRemove.year)
+      );
+      localStorage.setItem("books", JSON.stringify(books));
+    }
+  </script>
+</body>
+</html>
